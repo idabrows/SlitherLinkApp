@@ -8,7 +8,7 @@ public class Calculator{
         CLPVariable x = model.addVariable().lb(-3).ub(3);
         CLPVariable y = model.addVariable().free();
         model.createExpression().add(3,x).add(4,y).leq(10);
-        model.printModel();
+        //model.printModel();
     }
 
 }
