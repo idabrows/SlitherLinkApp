@@ -2,39 +2,43 @@ package model;
 import ilog.concert.*;
 import ilog.cplex.*;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Calculator {
+    Map M;
+
+    public Calculator(Map M){
+        this.M=M;
+    }
+
+
     public void solveMe() {
         try {
             IloCplex cplex = new IloCplex();
 
             // variables
-           IloIntVar[] X = new IloIntVar[2];
-            X[0]=cplex.boolVar();
-            X[1]=cplex.boolVar();
-
+            IloIntVar X[][]=loadVariables(cplex);
 
             // expressions
-            IloLinearNumExpr objective = cplex.linearNumExpr();
-            objective.addTerm(0.12, X[0]);
-            objective.addTerm(0.15, X[1]);
+      //      IloLinearNumExpr objective = cplex.linearNumExpr();
+          //  objective.addTerm(0.12, X[0][0]);
+            //objective.addTerm(0.15, X[1]);
 
             // define objective
-            cplex.addMaximize(objective);
+     //       cplex.addMaximize(objective);
 
             // define constraints
             List<IloRange> constraints = new ArrayList<IloRange>();
-            constraints.add(cplex.addLe(cplex.sum(cplex.prod(1, X[0]),cplex.prod(1, X[1])), 3));
-
+            loadGameConstraints(cplex, X, constraints);
 
             // solve
             if (cplex.solve()) {
                 System.out.println("obj = "+cplex.getObjValue());
-                System.out.println("x1   = "+cplex.getValue(X[0]));
-                System.out.println("x2   = "+cplex.getValue(X[1]));
+                System.out.println("x1   = "+cplex.getValue(X[0][0]));
+                System.out.println("x2   = "+cplex.getValue(X[1][1]));
             }
             else {
                 System.out.println("Model not solved");
@@ -46,6 +50,39 @@ public class Calculator {
             exc.printStackTrace();
         }
     }
+
+    public void loadGameConstraints(IloCplex cplex,IloIntVar[][] X,List<IloRange> l) throws IloException {
+        for(int i=0;i<M.rows-1;i++)
+            for(int j=0;j<M.cols-1;j++)
+                 l.add(cplex.addLe(cplex.sum(cplex.prod(1, X[0][0]),cplex.prod(1, X[1][1])), 3));
+
+
+    }
+
+    public IloIntVar[][] loadVariables(IloCplex IC) throws IloException {
+        IloIntVar[][] X = new IloIntVar[M.rows-1][M.cols-1];
+        for(int i=0;i<M.rows-1;i++)
+            for(int j=0;j<M.cols-1;j++)
+                X[i][j]=IC.boolVar();
+        return X;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
 
         /*public static void solveMe() {
             try {
@@ -101,5 +138,3 @@ public class Calculator {
             }
         }*/
 
-
-}
