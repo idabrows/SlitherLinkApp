@@ -1,8 +1,5 @@
 package model;
-import ilog.concert.IloException;
-import ilog.concert.IloLinearNumExpr;
-import ilog.concert.IloNumVar;
-import ilog.concert.IloRange;
+import ilog.concert.*;
 import ilog.cplex.*;
 
 import java.util.ArrayList;
@@ -10,7 +7,47 @@ import java.util.List;
 
 
 public class Calculator {
-        public static void solveMe() {
+    public void solveMe() {
+        try {
+            IloCplex cplex = new IloCplex();
+
+            // variables
+           IloIntVar[] X = new IloIntVar[2];
+            X[0]=cplex.boolVar();
+            X[1]=cplex.boolVar();
+
+
+            // expressions
+            IloLinearNumExpr objective = cplex.linearNumExpr();
+            objective.addTerm(0.12, X[0]);
+            objective.addTerm(0.15, X[1]);
+
+            // define objective
+            cplex.addMaximize(objective);
+
+            // define constraints
+            List<IloRange> constraints = new ArrayList<IloRange>();
+            constraints.add(cplex.addLe(cplex.sum(cplex.prod(1, X[0]),cplex.prod(1, X[1])), 3));
+
+
+            // solve
+            if (cplex.solve()) {
+                System.out.println("obj = "+cplex.getObjValue());
+                System.out.println("x1   = "+cplex.getValue(X[0]));
+                System.out.println("x2   = "+cplex.getValue(X[1]));
+            }
+            else {
+                System.out.println("Model not solved");
+            }
+
+            cplex.end();
+        }
+        catch (IloException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+        /*public static void solveMe() {
             try {
                 IloCplex cplex = new IloCplex();
 
@@ -62,5 +99,7 @@ public class Calculator {
             catch (IloException exc) {
                 exc.printStackTrace();
             }
-        }
+        }*/
+
+
 }

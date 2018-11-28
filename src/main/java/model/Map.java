@@ -8,7 +8,7 @@ public class Map {
 
 
     public void readMapFromFile(File file) throws IOException {
-//        File file = new File("//home//idabrows//Documents//SlitherLink//Coefficients");
+    //    File file = new File("//home//idabrows//Documents//SlitherLink//Coefficients");
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
         int i = 0;
