@@ -59,13 +59,7 @@ public class Calculator {
 
     }
 
-    public IloIntVar[][] loadVariables(IloCplex IC) throws IloException {
-        IloIntVar[][] X = new IloIntVar[M.rows-1][M.cols-1];
-        for(int i=0;i<M.rows-1;i++)
-            for(int j=0;j<M.cols-1;j++)
-                X[i][j]=IC.boolVar();
-        return X;
-    }
+
 
 
 
