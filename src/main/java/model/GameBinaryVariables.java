@@ -1,6 +1,5 @@
 package model;
 
-import controller.MapController;
 import ilog.concert.IloException;
 import ilog.concert.IloIntVar;
 import ilog.cplex.IloCplex;

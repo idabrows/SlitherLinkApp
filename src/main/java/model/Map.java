@@ -2,13 +2,12 @@ package model;
 import java.io.*;
 
 public class Map {
-    int rows=100;
-    int cols=100;
-    int coefficients[][]=new int[rows][cols];
+    private int rows=100;
+    private int cols=100;
+    private int coefficients[][]=new int[rows][cols];
 
 
     public void readMapFromFile(File file) throws IOException {
-    //    File file = new File("//home//idabrows//Documents//SlitherLink//Coefficients");
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
         int i = 0;
