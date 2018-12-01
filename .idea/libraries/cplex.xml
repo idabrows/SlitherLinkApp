@@ -4,6 +4,8 @@
       <root url="jar:///opt/ibm/ILOG/CPLEX_Studio_Community128/cplex/lib/cplex.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar:///opt/ibm/ILOG/CPLEX_Studio_Community128/cplex/lib/cplex.jar!/" />
+    </SOURCES>
   </library>
 </component>

@@ -1,10 +1,13 @@
 package model;
+import controller.MapController;
 import ilog.concert.*;
 import ilog.cplex.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javafx.scene.input.KeyCode.X;
 
 
 public class Calculator {
@@ -17,47 +20,20 @@ public class Calculator {
 
     public void solveMe() {
         try {
-            IloCplex cplex = new IloCplex();
+
+            MapController mapController = new MapController(M);
 
             // variables
-            IloIntVar X[][]=loadVariables(cplex);
-
-            // expressions
-      //      IloLinearNumExpr objective = cplex.linearNumExpr();
-          //  objective.addTerm(0.12, X[0][0]);
-            //objective.addTerm(0.15, X[1]);
-
-            // define objective
-     //       cplex.addMaximize(objective);
-
-            // define constraints
-            List<IloRange> constraints = new ArrayList<IloRange>();
-            loadGameConstraints(cplex, X, constraints);
-
-            // solve
-            if (cplex.solve()) {
-                System.out.println("obj = "+cplex.getObjValue());
-                System.out.println("x1   = "+cplex.getValue(X[0][0]));
-                System.out.println("x2   = "+cplex.getValue(X[1][1]));
-            }
-            else {
-                System.out.println("Model not solved");
-            }
-
-            cplex.end();
+            mapController.createVariables();
+            mapController.loadGameConstraints();
+            mapController.printSolution();
+            mapController.end();
         }
         catch (IloException exc) {
             exc.printStackTrace();
         }
     }
 
-    public void loadGameConstraints(IloCplex cplex,IloIntVar[][] X,List<IloRange> l) throws IloException {
-        for(int i=0;i<M.rows-1;i++)
-            for(int j=0;j<M.cols-1;j++)
-                 l.add(cplex.addLe(cplex.sum(cplex.prod(1, X[0][0]),cplex.prod(1, X[1][1])), 3));
-
-
-    }
 
 
 
