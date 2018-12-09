@@ -1,21 +1,18 @@
 package view;
-import model.Calculator2;
-import model.Calculator3;
+import ilog.concert.IloException;
+import model.Calculator;
 import model.Map;
 
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, IloException {
         Map M = new Map();
-        M.readMapFromFile(new File("//home//idabrows//Documents//SlitherLink//Coefficients"));
-          Calculator2 calculator=new Calculator2(M);
+        M.readMapFromFile(new File("//home//idabrows//Documents//SlitherLink//Coefficients2"));
+          Calculator calculator=new Calculator(M);
         calculator.solveMe();
-//        Calculator3 calculator=new Calculator3();
-//        calculator.solveMe();
     }
 }
