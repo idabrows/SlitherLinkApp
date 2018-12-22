@@ -42,8 +42,10 @@ public class Map {
     public String[][] stringCoefficients(){
         String[][] s = new String[rows][cols];
         for(int i=0;i<rows;i++)
-            for(int j=0;j<cols;j++)
-            s[i][j]= String.valueOf(coefficients[i][j]);
+            for(int j=0;j<cols;j++){
+               String s1=String.valueOf(coefficients[i][j]);
+               s[i][j] = s1.equals("-1") ? "" : s1;
+            }
         return s;
     }
 
@@ -71,4 +73,18 @@ public class Map {
         this.coefficients = coefficients;
     }
 
+    public void setCoefficient(int coefficient,int i,int j) {
+        this.coefficients[i][j] = coefficient;
+    }
+
+    public void setCoefficients(String[][] coefficients){
+        rows=coefficients.length;
+        cols=coefficients[0].length;
+        for (int i = 0; i < coefficients.length; i++) {
+            for (int j = 0; j < coefficients[0].length; j++) {
+                if (coefficients[i][j].isEmpty()) setCoefficient(-1,i,j);
+                else setCoefficient(Integer.parseInt(coefficients[i][j]),i,j);
+            }
+        }
+    }
 }

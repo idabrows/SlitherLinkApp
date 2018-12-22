@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Calculator {
-    int counter=0;
+    int counter;
     Map M;
     public Calculator(Map M){
         this.M=M;
@@ -19,151 +19,170 @@ public class Calculator {
 
 
 
-    public void printSolution(ArrayList<Coordinates> coordinates, IloIntVar[][] VerticalLine, IloIntVar[][] HorizontalLine, IloIntVar[][] Node, IloCplex cplex) throws IloException {
-        if(!coordinates.isEmpty()) System.out.println(coordinates.get(0).getX()+" "+coordinates.get(0).getY()+" "+coordinates.get(0).getValue());
+    public void printSolution(GameVariables gameVariables, IloCplex cplex) throws IloException {
         if (cplex.solve()) {
             counter++;
-            boolean f = isConnected(Node, VerticalLine, HorizontalLine, cplex);
+            boolean f = isConnected(gameVariables,cplex);
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println("Connectivity: "+f);
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             if(f) return;
-            if(coordinates.size()<=0){
-                for (int i = coordinates.size()==0 ? 0 : coordinates.get(coordinates.size()-1).getX(); i < VerticalLine.length; i++) {
-                    for (int j = coordinates.size()==0 ? 0 : coordinates.get(coordinates.size()-1).getY(); j < VerticalLine[0].length; j++) {
-                        ArrayList<Coordinates> a = new ArrayList<>(coordinates);
-                        a.add(new Coordinates(i,j,1-(int)cplex.getValue(VerticalLine[i][j])));
-         //                solveMe(a);
-                    }
-                }
-            }
+
         }
         else{
             System.out.println("Model not solved");
             //      cplex.exportModel("//home//idabrows//Documents//SlitherLink//logs.lp");
         }
-        System.out.println(counter);
 
     }
 
 
-    public void makeBool(IloIntVar[][] VerticalLine, IloIntVar[][] HorizontalLine, IloIntVar[][] Node, IloCplex cplex) throws IloException {
-        for (int i = 0; i < VerticalLine.length; i++)
-            for (int j = 0; j < VerticalLine[0].length; j++)
-                VerticalLine[i][j] = cplex.boolVar();
-        for (int i = 0; i < HorizontalLine.length; i++)
-            for (int j = 0; j < HorizontalLine[0].length; j++)
-                HorizontalLine[i][j] = cplex.boolVar();
-        for (int i = 0; i < Node.length; i++)
-            for (int j = 0; j < Node[0].length; j++)
-                Node[i][j] = cplex.boolVar();
+    public void makeBool(GameVariables gameVariables, IloCplex cplex) throws IloException {
+        for (int i = 0; i < gameVariables.getVerticalLineSolver().length; i++)
+            for (int j = 0; j < gameVariables.getVerticalLineSolver()[0].length; j++)
+                gameVariables.setVerticalLineSolver(cplex.boolVar(),i,j);
+        for (int i = 0; i < gameVariables.getHorizontalLineSolver().length; i++)
+            for (int j = 0; j < gameVariables.getHorizontalLineSolver()[0].length; j++)
+                gameVariables.setHorizontalLineSolver(cplex.boolVar(),i,j);
+        for (int i = 0; i < gameVariables.getNodeSolver().length; i++)
+            for (int j = 0; j < gameVariables.getNodeSolver()[0].length; j++)
+                gameVariables.setNodeSolver(cplex.boolVar(),i,j);
     }
 
 
-    public void addPrimaryConstraints(IloIntVar[][] VerticalLine, IloIntVar[][] HorizontalLine, IloIntVar[][] Node, IloCplex cplex, List<IloRange> constraints) throws IloException {
-        for (int i = 0; i < VerticalLine.length; i++)
-            for (int j = 0; j < VerticalLine[0].length; j++)
+    public void addPrimaryConstraints(GameVariables gameVariables, IloCplex cplex, List<IloRange> constraints) throws IloException {
+        for (int i = 0; i < gameVariables.getVerticalLineSolver().length; i++)
+            for (int j = 0; j < gameVariables.getVerticalLineSolver()[0].length; j++)
                 constraints.add(
-                        cplex.addGe(VerticalLine[i][j], 0));
+                        cplex.addGe(gameVariables.getVerticalLineSolver()[i][j], 0));
 
-        for (int i = 0; i < HorizontalLine.length; i++)
-            for (int j = 0; j < HorizontalLine[0].length; j++)
+        for (int i = 0; i < gameVariables.getHorizontalLineSolver().length; i++)
+            for (int j = 0; j < gameVariables.getHorizontalLineSolver()[0].length; j++)
                 constraints.add(
-                        cplex.addGe(HorizontalLine[i][j], 0));
+                        cplex.addGe(gameVariables.getHorizontalLineSolver()[i][j], 0));
 
-        for (int i = 0; i < Node.length; i++)
-            for (int j = 0; j < Node[0].length; j++)
+        for (int i = 0; i < gameVariables.getNodeSolver().length; i++)
+            for (int j = 0; j < gameVariables.getNodeSolver()[0].length; j++)
                 constraints.add(
-                        cplex.addGe(Node[i][j], 0));
+                        cplex.addGe(gameVariables.getNodeSolver()[i][j], 0));
     }
 
 
-    public void addGameConstraints(IloIntVar[][] VerticalLine, IloIntVar[][] HorizontalLine, IloCplex cplex, List<IloRange> constraints) throws IloException {
+    public void addGameConstraints(GameVariables gameVariables, IloCplex cplex, List<IloRange> constraints) throws IloException {
         for (int i = 0; i < M.getRows(); i++)
             for (int j = 0; j < M.getCols(); j++)
                 if (M.getCoefficients()[i][j] != -1)
                     constraints.add(
-                            cplex.addEq(cplex.sum(VerticalLine[i][j], VerticalLine[i][j + 1], HorizontalLine[i][j], HorizontalLine[i + 1][j]),
+                            cplex.addEq(cplex.sum(gameVariables.getVerticalLineSolver()[i][j], gameVariables.getVerticalLineSolver()[i][j + 1], gameVariables.getHorizontalLineSolver()[i][j], gameVariables.getHorizontalLineSolver()[i + 1][j]),
                                     M.getCoefficients()[i][j]));
     }
 
 
 
-    public void addCycleConstraints(IloIntVar[][] VerticalLine,IloIntVar[][] HorizontalLine,IloIntVar[][] Node,IloCplex cplex,List<IloRange> constraints) throws IloException {
+    public void addCycleConstraints(GameVariables gameVariables,IloCplex cplex,List<IloRange> constraints) throws IloException {
         //i=0
         //i=0, j=0
         constraints.add(
-                cplex.addEq(cplex.diff(cplex.sum(VerticalLine[0][0], HorizontalLine[0][0]), cplex.prod(2, Node[0][0])),
+                cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[0][0], gameVariables.getHorizontalLineSolver()[0][0]), cplex.prod(2, gameVariables.getNodeSolver()[0][0])),
                         0));
         //i=0,j=1...ncols-2
-        for (int j = 1; j < Node[0].length - 1; j++)
+        for (int j = 1; j < gameVariables.getNodeSolver()[0].length - 1; j++)
             constraints.add(
-                    cplex.addEq(cplex.diff(cplex.sum(HorizontalLine[0][j - 1], VerticalLine[0][j], HorizontalLine[0][j]), cplex.prod(2, Node[0][j])),
+                    cplex.addEq(cplex.diff(cplex.sum(gameVariables.getHorizontalLineSolver()[0][j - 1], gameVariables.getVerticalLineSolver()[0][j], gameVariables.getHorizontalLineSolver()[0][j]), cplex.prod(2, gameVariables.getNodeSolver()[0][j])),
                             0));
         //i-0,j=ncols-1
         constraints.add(
-                cplex.addEq(cplex.diff(cplex.sum(HorizontalLine[0][Node[0].length - 2], VerticalLine[0][Node[0].length - 1]), cplex.prod(2, Node[0][Node[0].length - 1])),
+                cplex.addEq(cplex.diff(cplex.sum(gameVariables.getHorizontalLineSolver()[0][gameVariables.getNodeSolver()[0].length - 2], gameVariables.getNodeSolver()[0][gameVariables.getNodeSolver()[0].length - 1]), cplex.prod(2, gameVariables.getNodeSolver()[0][gameVariables.getNodeSolver()[0].length - 1])),
                         0));
 
         //i=1..nrows-2
         //i=1.. nrows-2, j=0
-        for (int i = 1; i < Node.length - 1; i++) {
+        for (int i = 1; i < gameVariables.getNodeSolver().length - 1; i++) {
             constraints.add(
-                    cplex.addEq(cplex.diff(cplex.sum(VerticalLine[i - 1][0], HorizontalLine[i][0], VerticalLine[i][0]), cplex.prod(2, Node[i][0])),
+                    cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[i - 1][0], gameVariables.getHorizontalLineSolver()[i][0], gameVariables.getVerticalLineSolver()[i][0]), cplex.prod(2, gameVariables.getNodeSolver()[i][0])),
                             0));
             //i=1.. nrows-2, j=1..ncols-2
-            for (int j = 1; j < Node[0].length - 1; j++)
+            for (int j = 1; j < gameVariables.getNodeSolver()[0].length - 1; j++)
                 constraints.add(
-                        cplex.addEq(cplex.diff(cplex.sum(VerticalLine[i - 1][j], HorizontalLine[i][j - 1], VerticalLine[i][j], HorizontalLine[i][j]), cplex.prod(2, Node[i][j])),
+                        cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[i - 1][j], gameVariables.getHorizontalLineSolver()[i][j - 1], gameVariables.getVerticalLineSolver()[i][j], gameVariables.getHorizontalLineSolver()[i][j]), cplex.prod(2, gameVariables.getNodeSolver()[i][j])),
                                 0));
             //i=1...nrows-2, j=ncols-1
             constraints.add(
-                    cplex.addEq(cplex.diff(cplex.sum(VerticalLine[i - 1][Node[0].length - 1], HorizontalLine[i][Node[0].length - 2], VerticalLine[i][Node[0].length - 1]), cplex.prod(2, Node[i][Node[0].length - 1])),
+                    cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[i - 1][gameVariables.getNodeSolver()[0].length - 1], gameVariables.getHorizontalLineSolver()[i][gameVariables.getNodeSolver()[0].length - 2], gameVariables.getVerticalLineSolver()[i][gameVariables.getNodeSolver()[0].length - 1]), cplex.prod(2, gameVariables.getNodeSolver()[i][gameVariables.getNodeSolver()[0].length - 1])),
                             0));
         }
         //i=nrows-1
         //j=0
         constraints.add(
-                cplex.addEq(cplex.diff(cplex.sum(VerticalLine[Node.length - 2][0], HorizontalLine[Node.length - 1][0]), cplex.prod(2, Node[Node.length - 1][0])),
+                cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[gameVariables.getNodeSolver().length - 2][0], gameVariables.getHorizontalLineSolver()[gameVariables.getNodeSolver().length - 1][0]), cplex.prod(2, gameVariables.getNodeSolver()[gameVariables.getNodeSolver().length - 1][0])),
                         0));
         //j=1...ncols-2
-        for (int j = 1; j < Node[0].length - 1; j++)
+        for (int j = 1; j < gameVariables.getNodeSolver()[0].length - 1; j++)
             constraints.add(
-                    cplex.addEq(cplex.diff(cplex.sum(VerticalLine[Node.length - 2][j], HorizontalLine[Node.length - 1][j - 1], HorizontalLine[Node.length - 1][j]), cplex.prod(2, Node[Node.length - 1][j])),
+                    cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[gameVariables.getNodeSolver().length - 2][j], gameVariables.getHorizontalLineSolver()[gameVariables.getNodeSolver().length - 1][j - 1], gameVariables.getHorizontalLineSolver()[gameVariables.getNodeSolver().length - 1][j]), cplex.prod(2, gameVariables.getNodeSolver()[gameVariables.getNodeSolver().length - 1][j])),
                             0));
         //j=ncols-1
         constraints.add(
-                cplex.addEq(cplex.diff(cplex.sum(VerticalLine[Node.length - 2][Node[0].length - 1], HorizontalLine[Node.length - 1][Node[0].length - 2]), cplex.prod(2, Node[Node.length - 1][Node[0].length - 1])),
+                cplex.addEq(cplex.diff(cplex.sum(gameVariables.getVerticalLineSolver()[gameVariables.getNodeSolver().length - 2][gameVariables.getNodeSolver()[0].length - 1], gameVariables.getHorizontalLineSolver()[gameVariables.getNodeSolver().length - 1][gameVariables.getNodeSolver()[0].length - 2]), cplex.prod(2, gameVariables.getNodeSolver()[gameVariables.getNodeSolver().length - 1][gameVariables.getNodeSolver()[0].length - 1])),
                         0));
 
     }
 
 
-    public boolean isConnected(IloIntVar[][] Node,IloIntVar[][] V,IloIntVar[][] H,IloCplex cplex) throws IloException {
-        int i=0; int j=0;
+    public boolean isConnected(GameVariables gameVariables,IloCplex cplex) throws IloException {
+        int i; int j;
         //creating an array with visited vertexes, if are not in the subgraph visited = true
-        boolean[][] Visited = new boolean[Node.length][Node[0].length];
+        boolean[][] Visited = new boolean[gameVariables.getNodeSolver().length][gameVariables.getNodeSolver()[0].length];
         for(i=0;i<Visited.length;i++)
             for(j=0;j<Visited[0].length;j++) {
-                if (cplex.getValue(Node[i][j]) == 0) Visited[i][j] = true;
+                if (cplex.getValue(gameVariables.getNodeSolver()[i][j]) == 0) Visited[i][j] = true;
                 else Visited[i][j] = false;
             }
 
         //looking for a vertex from the subgraph
         i=0; j=0;
         while(Visited[i][j]==true){
-            if(j==Node[0].length){
+            if(j==gameVariables.getNodeSolver()[0].length){
                 j=0; i++;
             }
             else j++;
         }
         //i,j - coordinated of the vertex
         //goes through a cycle
-        int c = myDFS(Node,V,H,cplex,Visited,i,j,1); //the first vertex has to be counted, too
+        int c = myDFS(gameVariables,cplex,Visited,i,j,1); //the first vertex has to be counted, too
         int subGraphSize=0;
-        for(i=0;i<Node.length;i++)
-            for (j=0;j<Node[0].length;j++)
-                if(cplex.getValue(Node[i][j])==1) subGraphSize++;
+        for(i=0;i<gameVariables.getNodeSolver().length;i++)
+            for (j=0;j<gameVariables.getNodeSolver()[0].length;j++)
+                if(cplex.getValue(gameVariables.getNodeSolver()[i][j])==1) subGraphSize++;
+
+        return subGraphSize==c;
+    }
+
+    public boolean isConnected(GameVariables gameVariables) throws IloException {
+        int i; int j;
+        //creating an array with visited vertexes, if are not in the subgraph visited = true
+        boolean[][] Visited = new boolean[gameVariables.getNodeSolver().length][gameVariables.getNodeSolver()[0].length];
+        for(i=0;i<Visited.length;i++)
+            for(j=0;j<Visited[0].length;j++) {
+                if (gameVariables.getNodeInt()[i][j] == 0) Visited[i][j] = true;
+                else Visited[i][j] = false;
+            }
+
+        //looking for a vertex from the subgraph
+        i=0; j=0;
+        while(Visited[i][j]==true){
+            if(j==gameVariables.getNodeSolver()[0].length){
+                j=0; i++;
+            }
+            else j++;
+        }
+        //i,j - coordinated of the vertex
+        //goes through a cycle
+        int c = myDFS(gameVariables,Visited,i,j,1); //the first vertex has to be counted, too
+        int subGraphSize=0;
+        for(i=0;i<gameVariables.getNodeSolver().length;i++)
+            for (j=0;j<gameVariables.getNodeSolver()[0].length;j++)
+                if(gameVariables.getNodeInt()[i][j]==1) subGraphSize++;
 
         return subGraphSize==c;
     }
@@ -171,28 +190,52 @@ public class Calculator {
 
 
     //myDFS goes through the connected subgraph and counts the number of vertexes
-    int myDFS(IloIntVar[][] Node,IloIntVar[][] V,IloIntVar[][] H,IloCplex cplex,boolean[][] Visited,int i,int j,int counter) throws IloException {
+    private int myDFS(GameVariables gameVariables,IloCplex cplex,boolean[][] Visited,int i,int j,int counter) throws IloException {
         Visited[i][j]=true;
         boolean hasUnvisited = false;
 
-        if (i>0 && Visited[i-1][j]==false && cplex.getValue(V[i-1][j])==1) hasUnvisited=true;
-        if(j>0 && Visited[i][j-1]==false && cplex.getValue(H[i][j-1])==1) hasUnvisited=true;
-        if(i<Visited.length-1 && Visited[i+1][j]==false && cplex.getValue(V[i][j])==1) hasUnvisited=true;
-        if(j<Visited[0].length-1 && Visited[i][j+1]==false && cplex.getValue(H[i][j])==1) hasUnvisited=true;
+        if (i>0 && Visited[i-1][j]==false && cplex.getValue(gameVariables.getVerticalLineSolver()[i-1][j])==1) hasUnvisited=true;
+        if(j>0 && Visited[i][j-1]==false && cplex.getValue(gameVariables.getHorizontalLineSolver()[i][j-1])==1) hasUnvisited=true;
+        if(i<Visited.length-1 && Visited[i+1][j]==false && cplex.getValue(gameVariables.getVerticalLineSolver()[i][j])==1) hasUnvisited=true;
+        if(j<Visited[0].length-1 && Visited[i][j+1]==false && cplex.getValue(gameVariables.getHorizontalLineSolver()[i][j])==1) hasUnvisited=true;
 
         if(!hasUnvisited) return counter;
 
-        if (i>0 && Visited[i-1][j]==false && cplex.getValue(V[i-1][j])==1)
-                return myDFS(Node,V,H,cplex,Visited,i-1,j,counter+1);
-        if(j>0 && Visited[i][j-1]==false && cplex.getValue(H[i][j-1])==1)
-                return myDFS(Node,V,H,cplex,Visited,i,j-1,counter+1);
-        if(i<Visited.length-1 && Visited[i+1][j]==false && cplex.getValue(V[i][j])==1)
-                return myDFS(Node,V,H,cplex,Visited,i+1,j,counter+1);
-        if(j<Visited[0].length-1 && Visited[i][j+1]==false && cplex.getValue(H[i][j])==1)
-                return myDFS(Node,V,H,cplex,Visited,i,j+1,counter+1);
+        if (i>0 && Visited[i-1][j]==false && cplex.getValue(gameVariables.getVerticalLineSolver()[i-1][j])==1)
+                return myDFS(gameVariables,cplex,Visited,i-1,j,counter+1);
+        if(j>0 && Visited[i][j-1]==false && cplex.getValue(gameVariables.getHorizontalLineSolver()[i][j-1])==1)
+                return myDFS(gameVariables,cplex,Visited,i,j-1,counter+1);
+        if(i<Visited.length-1 && Visited[i+1][j]==false && cplex.getValue(gameVariables.getVerticalLineSolver()[i][j])==1)
+                return myDFS(gameVariables,cplex,Visited,i+1,j,counter+1);
+        if(j<Visited[0].length-1 && Visited[i][j+1]==false && cplex.getValue(gameVariables.getHorizontalLineSolver()[i][j])==1)
+                return myDFS(gameVariables,cplex,Visited,i,j+1,counter+1);
 
         return -1;
     }
+
+    private int myDFS(GameVariables gameVariables,boolean[][] Visited,int i,int j,int counter) throws IloException {
+        Visited[i][j]=true;
+        boolean hasUnvisited = false;
+
+        if (i>0 && Visited[i-1][j]==false && gameVariables.getVerticalLineInt()[i-1][j]==1) hasUnvisited=true;
+        if(j>0 && Visited[i][j-1]==false && gameVariables.getHorizontalLineInt()[i][j-1]==1) hasUnvisited=true;
+        if(i<Visited.length-1 && Visited[i+1][j]==false && gameVariables.getVerticalLineInt()[i][j]==1) hasUnvisited=true;
+        if(j<Visited[0].length-1 && Visited[i][j+1]==false && gameVariables.getHorizontalLineInt()[i][j]==1) hasUnvisited=true;
+
+        if(!hasUnvisited) return counter;
+
+        if (i>0 && Visited[i-1][j]==false && gameVariables.getVerticalLineInt()[i-1][j]==1)
+            return myDFS(gameVariables,Visited,i-1,j,counter+1);
+        if(j>0 && Visited[i][j-1]==false && gameVariables.getHorizontalLineInt()[i][j-1]==1)
+            return myDFS(gameVariables,Visited,i,j-1,counter+1);
+        if(i<Visited.length-1 && Visited[i+1][j]==false && gameVariables.getVerticalLineInt()[i][j]==1)
+            return myDFS(gameVariables,Visited,i+1,j,counter+1);
+        if(j<Visited[0].length-1 && Visited[i][j+1]==false && gameVariables.getHorizontalLineInt()[i][j]==1)
+            return myDFS(gameVariables,Visited,i,j+1,counter+1);
+
+        return -1;
+    }
+
 
 
 }

@@ -2,10 +2,6 @@ package controller;
 
 
 
-/**
- *
- * @author Matmozaur
- */
 public class FileCommunicator {
     private MyFileReader FR;
 

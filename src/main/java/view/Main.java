@@ -14,6 +14,6 @@ public class Main {
         M.readMapFromFile(new File("//home//idabrows//Documents//SlitherLink//Coefficients2"));
         SolverController solverController=new SolverController(M);
         ArrayList<Coordinates> ch = new ArrayList<>();
-        solverController.solveMe(ch);
+        solverController.solveMe();
     }
 }
