@@ -1,6 +1,8 @@
 <component name="libraryTable">
   <library name="javailp-1.2a">
-    <CLASSES />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lplib/javailp-1.2a.jar!/" />
+    </CLASSES>
     <JAVADOC />
     <SOURCES />
   </library>

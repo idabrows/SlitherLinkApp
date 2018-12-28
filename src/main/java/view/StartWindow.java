@@ -1,7 +1,10 @@
 package view;
 
 import controller.FileCommunicator;
+import controller.SolverController;
 import controller.ViewWorker;
+import ilog.concert.IloException;
+import model.Calculator;
 import model.Map;
 import view.Components.*;
 
@@ -12,12 +15,10 @@ import java.io.IOException;
 
 
 public class StartWindow extends JFrame {
+    private MapWindow mapWindow;
     private MyTextFields myTextFields;
-    private JLabel jLabel = new JLabel();
     private JFrame frame;
-    private JPanel panel1 = new JPanel();
     private MyTable table;
-    private MyPicture picture;
     private MyButton okButton;
     private MyButton newButton;
     private MyButton openButton;
@@ -29,14 +30,13 @@ public class StartWindow extends JFrame {
     private Map map;
     protected FileCommunicator FC = FileCommunicator.getInstance();
     protected ViewWorker VW;
-    private  int indToDel;
+    private JPanel panel1;
 
-    public StartWindow() {
-//        setSize(300,300);
+    public StartWindow(){
         createandshow();
         VW = new ViewWorker();
         openButton.getButton().addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) { FileOpenActionPerformed(evt); }
+            public void actionPerformed(java.awt.event.ActionEvent evt) { OpenActionPerformed(evt); }
         });
         helpButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -50,7 +50,7 @@ public class StartWindow extends JFrame {
         });
         saveButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NewActionPerformed(evt);
+                SaveActionPerformed(evt);
             }
         });
         viewButton.getButton().addActionListener(new java.awt.event.ActionListener() {
@@ -58,16 +58,51 @@ public class StartWindow extends JFrame {
                 ViewActionPerformed(evt);
             }
         });
+        solveButton.getButton().addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    SolveActionPerformed(evt);
+                } catch (IloException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        frame.setMinimumSize(new Dimension(430,150));
 
     }
 
-    private void FileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileOpenActionPerformed
+    private void OpenActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_FileOpenActionPerformed
+        saveButton.getButton().setEnabled(true);
         F = FC.getFR().getUsersFile(this);
         try {
-            map=FC.getFR().getUserMap(F);
+            JTable jTable=FC.getFR().getUsersTable(F);
+            if(table!=null)
+               frame.getContentPane().remove(table.getTable());
+            if(okButton!=null) {
+                frame.getContentPane().remove(myTextFields.getForm());
+                frame.getContentPane().remove(okButton.getButton());
+            }
+            map = FC.getFR().getUsersMap(F);
+            frame.setSize(40+40*map.getCols(),40+40*map.getRows());
+            table = new MyTable(jTable,0,0,frame.getContentPane());
             SwingUtilities.updateComponentTreeUI(this);
+            viewButton.getButton().setEnabled(true);
+            solveButton.getButton().setEnabled(true);
+            frame.repaint();
             frame.setVisible(true);
-            new MapWindow(map);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void SaveActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_FileOpenActionPerformed
+        ViewWorker viewWorker = new ViewWorker();
+        map = viewWorker.getMap(table);
+        F = FC.getFW().getUsersDir(this);
+        try {
+            map.saveUsersMap(F);
+            SwingUtilities.updateComponentTreeUI(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,40 +113,68 @@ public class StartWindow extends JFrame {
         new HelpWindow();
     }
 
+    private void SolveActionPerformed(java.awt.event.ActionEvent evt) throws IloException {
+        ViewWorker viewWorker = new ViewWorker();
+        map = viewWorker.getMap(table);
+        SolverController solverController = new SolverController(map);
+        if(mapWindow==null || !mapWindow.getFocusableWindowState()){
+            mapWindow = new MapWindow(map);
+            mapWindow.showSolved(solverController);
+        }
+        else{
+            mapWindow.setMap(viewWorker.getMap(table));
+            mapWindow.getFrame().dispose();
+            mapWindow.create();
+            mapWindow.showSolved(solverController);
+        }
+
+    }
 
 
     private void ViewActionPerformed(java.awt.event.ActionEvent evt) {
-        Map newMap = new Map();
-        String[][] s = new String[8][6];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 6; j++) {
-                s[i][j] = "";
-            }
+        ViewWorker viewWorker = new ViewWorker();
+        if(mapWindow==null || !mapWindow.getFocusableWindowState()){
+                mapWindow = new MapWindow(viewWorker.getMap(table));
         }
-        newMap.setCoefficients(s);
-        new MapWindow(newMap);
+        else{
+            mapWindow.setMap(viewWorker.getMap(table));
+            mapWindow.getFrame().dispose();
+            mapWindow.create();
+            mapWindow.showUnsolved();
+        }
+
     }
 
     private void OkActionPerformed(java.awt.event.ActionEvent evt) {
-        frame.setSize(60*6,30*8);
-        table = new MyTable(8,6,0,0,frame.getContentPane());
-        frame.getContentPane().remove(indToDel-1);
-        frame.getContentPane().remove(indToDel-2);
+        saveButton.getButton().setEnabled(true);
+        viewButton.getButton().setEnabled(true);
+        solveButton.getButton().setEnabled(true);
+        frame.setSize(40+40*Integer.parseInt(myTextFields.getForm().getFields()[1].getText()),40+40*Integer.parseInt(myTextFields.getForm().getFields()[0].getText()));
+        table = new MyTable(Integer.parseInt(myTextFields.getForm().getFields()[0].getText()),Integer.parseInt(myTextFields.getForm().getFields()[1].getText()),0,0,frame.getContentPane());
+        frame.getContentPane().remove(myTextFields.getForm());
+        frame.getContentPane().remove(okButton.getButton());
+        frame.repaint();
         frame.setVisible(true);
 
     }
 
+
     private void NewActionPerformed(java.awt.event.ActionEvent evt) {
+        if(table!=null)
+            frame.getContentPane().remove(table.getTable());
+        if(okButton!=null) {
+            frame.getContentPane().remove(myTextFields.getForm());
+            frame.getContentPane().remove(okButton.getButton());
+        }
+        frame.repaint();
         myTextFields = new MyTextFields(frame.getContentPane());
         okButton = new MyButton("OK",3,0,frame.getContentPane());
-        indToDel=frame.getContentPane().getComponentCount();
         frame.setVisible(true);
         okButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 OkActionPerformed(evt);
             }
         });
-
     }
 
 
@@ -126,9 +189,11 @@ public class StartWindow extends JFrame {
         openButton = new MyButton("OPEN",1,1,frame.getContentPane());
         helpButton = new MyButton("HELP",2,1,frame.getContentPane());
         saveButton = new MyButton("SAVE",3,1,frame.getContentPane());
+        saveButton.getButton().setEnabled(false);
         solveButton = new MyButton("SOLVE",4,1,frame.getContentPane());
+        solveButton.getButton().setEnabled(false);
         viewButton = new MyButton("VIEW",5,1,frame.getContentPane());
-
+        viewButton.getButton().setEnabled(false);
 
         frame.setVisible(true);
     }

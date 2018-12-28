@@ -1,21 +1,20 @@
 package view.Components;
 
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class CenterRenderer implements TableCellRenderer {
+public class CenterRenderer extends DefaultTableCellRenderer {
+    private static final long serialVersionUID = 4303488312800615992L;
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public CenterRenderer() {
+        setHorizontalAlignment(SwingConstants.CENTER);
+    }
 
-        if(value instanceof JLabel) {
-            JLabel lab = (JLabel)value;
-            lab.setHorizontalAlignment(JLabel.CENTER);
-            return lab;
-        } else if(value instanceof Component) {
-            return (Component)value;
-        }
-        return new JLabel(String.valueOf(value),JLabel.CENTER);
+    public Component getTableCellRendererComponent(JTable table, Object value,
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+                row, column);
+        return this;
     }
 }
-

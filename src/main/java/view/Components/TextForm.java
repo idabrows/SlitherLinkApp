@@ -48,6 +48,7 @@ public class TextForm extends JPanel {
         return (fields[i].getText());
     }
 
+
     public static void main(String[] args) {
         String[] labels = { "Number of rows", "Number of columns"};
         char[] mnemonics = { 'R', 'C' };
@@ -73,6 +74,14 @@ public class TextForm extends JPanel {
         f.getContentPane().add(p, BorderLayout.SOUTH);
         f.pack();
         f.setVisible(true);
+    }
+
+    public JTextField[] getFields() {
+        return fields;
+    }
+
+    public void setFields(JTextField[] fields) {
+        this.fields = fields;
     }
 }
 

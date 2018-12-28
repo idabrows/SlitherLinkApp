@@ -4,7 +4,7 @@ import java.io.*;
 public class Map {
     private int rows=100;
     private int cols=100;
-    private int coefficients[][]=new int[rows][cols];
+    private int[][] coefficients=new int[rows][cols];
 
 
     public void readMapFromFile(File file) throws IOException {
@@ -21,6 +21,19 @@ public class Map {
         cols=pom.length;
         rows=i;
 
+    }
+
+    public void saveUsersMap(File file) throws IOException {
+        BufferedWriter outputWriter = new BufferedWriter(new FileWriter(file));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j <cols; j++) {
+                outputWriter.write(Integer.toString(coefficients[i][j]));
+                outputWriter.write(" ");
+            }
+            outputWriter.newLine();
+        }
+        outputWriter.flush();
+        outputWriter.close();
     }
 
 
@@ -44,10 +57,23 @@ public class Map {
         for(int i=0;i<rows;i++)
             for(int j=0;j<cols;j++){
                String s1=String.valueOf(coefficients[i][j]);
-               s[i][j] = s1.equals("-1") ? "" : s1;
+               switch ((s1)){
+                   case "0": s[i][j]="0"; break;
+                   case "1": s[i][j]="1"; break;
+                   case "2": s[i][j]="2"; break;
+                   case "3": s[i][j]="3"; break;
+                   default: s[i][j]="";
+               }
+
             }
         return s;
     }
+
+    public int stringCoefficientToInt(String s){
+          if(s==null || (!s.equals("0") && !s.equals("1") && !s.equals("2") && !s.equals("3"))) s="-1";
+          return Integer.parseInt(s);
+    }
+
 
     public int getRows() {
         return rows;
@@ -82,9 +108,10 @@ public class Map {
         cols=coefficients[0].length;
         for (int i = 0; i < coefficients.length; i++) {
             for (int j = 0; j < coefficients[0].length; j++) {
-                if (coefficients[i][j].isEmpty()) setCoefficient(-1,i,j);
-                else setCoefficient(Integer.parseInt(coefficients[i][j]),i,j);
+              setCoefficient(stringCoefficientToInt(coefficients[i][j]),i,j);
             }
         }
+
     }
+
 }

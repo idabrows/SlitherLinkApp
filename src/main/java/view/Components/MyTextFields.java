@@ -17,8 +17,8 @@ public class MyTextFields {
         String[] labels = { "Number of rows", "Number of columns"};
         char[] mnemonics = { 'R', 'C' };
         int[] widths = { 5, 5};
-        String[] descs = { "Number of rows",  "Number of columns" };
-        final TextForm form = new TextForm(labels, mnemonics, widths, descs);
+        String[] descs = { "number of rows of the new map",  "number of columns of the new map" };
+        form = new TextForm(labels, mnemonics, widths, descs);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 0;       //reset to default
@@ -38,5 +38,6 @@ public class MyTextFields {
     public void setForm(TextForm form) {
         this.form = form;
     }
+
 }
 

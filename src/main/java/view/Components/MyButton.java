@@ -6,15 +6,10 @@ import javax.swing.*;
 
 
 public class MyButton {
-    final static boolean shouldFill = true;
     private JButton button;
 
     public MyButton(String s,int x,int y,Container pane){
         GridBagConstraints c = new GridBagConstraints();
-        if (shouldFill) {
-            //natural height, maximum width
-            c.fill = GridBagConstraints.HORIZONTAL;
-        }
 
         button = new JButton(s);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -26,7 +21,6 @@ public class MyButton {
         c.gridwidth = 1;   //2 columns wide
         c.gridy = y;       //third row
         pane.add(button, c);
-
 
 
     }
@@ -52,9 +46,6 @@ public class MyButton {
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
 
-                createAndShowGUI();
 
-    }
 }

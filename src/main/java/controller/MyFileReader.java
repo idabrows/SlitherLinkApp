@@ -1,6 +1,7 @@
 package controller;
 
 import model.Map;
+import view.Components.MyTable;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -11,11 +12,10 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class MyFileReader {
+
     private final JFileChooser FileChooser;
     private static MyFileReader f;
     private MyFileReader(){
@@ -37,10 +37,20 @@ public class MyFileReader {
         return null;
     }
 
-    public Map getUserMap(File file) throws IOException {
+    public Map getUsersMap(File file) throws IOException {
         Map map=new Map();
         map.readMapFromFile(file);
         return map;
     }
+
+    public JTable getUsersTable(File file) throws IOException {
+        Map m = new Map();
+        m.readMapFromFile(file);
+        ViewWorker viewWorker = new ViewWorker();
+        JTable table = viewWorker.getTable(m);
+        return table;
+    }
+
+
 
 }

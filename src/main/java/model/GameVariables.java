@@ -14,11 +14,26 @@ public class GameVariables {
     private int[][] VerticalLineInt;
     private int[][] HorizontalLineInt;
     private int[][] NodeInt;
+    private int[][] SureVertical;
+    private int[][] SureHorizontal;
 
     public GameVariables(Map M){
         VerticalLineSolver = new IloIntVar[M.getRows()][M.getCols() + 1];
         HorizontalLineSolver = new IloIntVar[M.getRows() + 1][M.getCols()];
         NodeSolver = new IloIntVar[M.getRows() + 1][M.getCols() + 1];
+        SureVertical = new int[M.getRows()][M.getCols() + 1];
+        SureHorizontal = new int[M.getRows() + 1][M.getCols()];
+        for (int i = 0; i < SureVertical.length; i++) {
+            for (int j = 0; j < SureVertical[0].length; j++) {
+                SureVertical[i][j]=-1;
+            }
+        }
+        for (int i = 0; i < SureHorizontal.length; i++) {
+            for (int j = 0; j < SureHorizontal[0].length; j++) {
+                SureHorizontal[i][j]=-1;
+            }
+        }
+
     }
 
     public GameVariables(GameVariables gameVariables){
@@ -122,6 +137,22 @@ public class GameVariables {
 
     }
 
+    public int[][] getSureVertical() {
+        return SureVertical;
+    }
+
+    public void setSureVertical(int[][] sureVertical) {
+        SureVertical = sureVertical;
+    }
+
+    public int[][] getSureHorizontal() {
+        return SureHorizontal;
+    }
+
+    public void setSureHorizontal(int[][] sureHorizontal) {
+        SureHorizontal = sureHorizontal;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,6 +175,39 @@ public class GameVariables {
         }
         return true;
 
+
+    }
+
+    public void printSureVertical(){
+        for (int i = 0; i < SureVertical.length; i++) {
+            System.out.println(Arrays.toString(SureVertical[i]));
+        }
+    }
+
+    public void printSureHorizontal(){
+        for (int i = 0; i < SureHorizontal.length; i++) {
+            System.out.println(Arrays.toString(SureHorizontal[i]));
+        }
+    }
+
+    public int sumSureVertical(){
+        int sum=0;
+        for (int i = 0; i < SureVertical.length; i++) {
+            for (int j = 0; j < SureVertical[0].length; j++) {
+                if(SureVertical[i][j]!=-1) sum++;
+            }
+        }
+        return sum;
+    }
+
+    public int sumSureHorizontal(){
+        int sum=0;
+        for (int i = 0; i < SureHorizontal.length; i++) {
+            for (int j = 0; j < SureHorizontal[0].length; j++) {
+                if(SureHorizontal[i][j]!=-1) sum++;
+            }
+        }
+        return sum;
     }
 
     @Override

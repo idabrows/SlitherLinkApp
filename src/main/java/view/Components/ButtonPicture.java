@@ -34,8 +34,7 @@ public class ButtonPicture {
             view.Components.ButtonPicture picture = new view.Components.ButtonPicture(0,0,frame.getContentPane());
             picture.picture.setIcon(new ImageIcon("Untitled.ico"));
 
-            //Display the window.
-            // frame.pack();
+
             frame.setVisible(true);
         }
 
