@@ -2,14 +2,10 @@ package controller;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import model.Calculator;
-import model.Coordinates;
 import model.GameVariables;
 import model.Map;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class SolverController {
@@ -28,9 +24,6 @@ public class SolverController {
 
 
     public void solveMe() throws IloException {
-        int counter = 0;
-        HashSet<GameVariables> S = new HashSet<>();
-
         gameVariables = new GameVariables(M);
         List<IloRange> constraints = new ArrayList<>();
         notConnectedYet(gameVariables, cplex, constraints);
@@ -39,7 +32,6 @@ public class SolverController {
             return;
         }
         gameVariables.setIntGameVariables(cplex);
-
 
         while (!calculator.isConnected(gameVariables, cplex)) {
             calculator.divide(gameVariables, cplex);

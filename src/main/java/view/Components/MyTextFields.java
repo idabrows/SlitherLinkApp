@@ -26,8 +26,8 @@ public class MyTextFields {
         c.anchor = GridBagConstraints.PAGE_END; //bottom of space
         c.insets = new Insets(10,0,0,0);  //top padding
         c.gridx = 0;       //aligned with button 2
-        c.gridwidth = 3;   //2 columns wide
-        c.gridy = 0;       //third row
+        c.gridwidth = 3;   //3 columns wide
+        c.gridy = 0;       //zero row
         pane.add(form, c);
     }
 

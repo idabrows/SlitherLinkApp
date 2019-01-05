@@ -4,7 +4,6 @@ import controller.FileCommunicator;
 import controller.SolverController;
 import controller.ViewWorker;
 import ilog.concert.IloException;
-import model.Calculator;
 import model.Map;
 import view.Components.*;
 
@@ -15,11 +14,11 @@ import java.io.IOException;
 
 
 public class StartWindow extends JFrame {
+    private OkButton okButton;
     private MapWindow mapWindow;
-    private MyTextFields myTextFields;
+    private MySpinners mySpinners;
     private JFrame frame;
     private MyTable table;
-    private MyButton okButton;
     private MyButton newButton;
     private MyButton openButton;
     private MyButton helpButton;
@@ -79,7 +78,10 @@ public class StartWindow extends JFrame {
             if(table!=null)
                frame.getContentPane().remove(table.getTable());
             if(okButton!=null) {
-                frame.getContentPane().remove(myTextFields.getForm());
+                frame.getContentPane().remove(mySpinners.getSpinner1());
+                frame.getContentPane().remove(mySpinners.getSpinner2());
+                frame.getContentPane().remove(mySpinners.getLabel1());
+                frame.getContentPane().remove(mySpinners.getLabel2());
                 frame.getContentPane().remove(okButton.getButton());
             }
             map = FC.getFR().getUsersMap(F);
@@ -149,10 +151,13 @@ public class StartWindow extends JFrame {
         saveButton.getButton().setEnabled(true);
         viewButton.getButton().setEnabled(true);
         solveButton.getButton().setEnabled(true);
-        frame.setSize(40+40*Integer.parseInt(myTextFields.getForm().getFields()[1].getText()),40+40*Integer.parseInt(myTextFields.getForm().getFields()[0].getText()));
-        table = new MyTable(Integer.parseInt(myTextFields.getForm().getFields()[0].getText()),Integer.parseInt(myTextFields.getForm().getFields()[1].getText()),0,0,frame.getContentPane());
-        frame.getContentPane().remove(myTextFields.getForm());
+        frame.getContentPane().remove(mySpinners.getSpinner1());
+        frame.getContentPane().remove(mySpinners.getSpinner2());
+        frame.getContentPane().remove(mySpinners.getLabel1());
+        frame.getContentPane().remove(mySpinners.getLabel2());
         frame.getContentPane().remove(okButton.getButton());
+        frame.setSize(40+40*(Integer)mySpinners.getSpinner2().getValue(),40+40*(Integer)mySpinners.getSpinner1().getValue());
+        table = new MyTable((Integer) mySpinners.getSpinner1().getValue(),(Integer) mySpinners.getSpinner2().getValue(),0,0,frame.getContentPane());
         frame.repaint();
         frame.setVisible(true);
 
@@ -160,15 +165,19 @@ public class StartWindow extends JFrame {
 
 
     private void NewActionPerformed(java.awt.event.ActionEvent evt) {
+        frame.setSize(0,0);
         if(table!=null)
             frame.getContentPane().remove(table.getTable());
         if(okButton!=null) {
-            frame.getContentPane().remove(myTextFields.getForm());
+            frame.getContentPane().remove(mySpinners.getSpinner1());
+            frame.getContentPane().remove(mySpinners.getSpinner2());
+            frame.getContentPane().remove(mySpinners.getLabel1());
+            frame.getContentPane().remove(mySpinners.getLabel2());
             frame.getContentPane().remove(okButton.getButton());
         }
+        mySpinners = new MySpinners(frame.getContentPane());
+        okButton = new OkButton(frame.getContentPane());
         frame.repaint();
-        myTextFields = new MyTextFields(frame.getContentPane());
-        okButton = new MyButton("OK",3,0,frame.getContentPane());
         frame.setVisible(true);
         okButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -185,14 +194,14 @@ public class StartWindow extends JFrame {
         frame.getContentPane().setLayout(new GridBagLayout());
         //Set up the content pane.
         frame.setSize(430,150);
-        newButton = new MyButton("NEW",0,1,frame.getContentPane());
-        openButton = new MyButton("OPEN",1,1,frame.getContentPane());
-        helpButton = new MyButton("HELP",2,1,frame.getContentPane());
-        saveButton = new MyButton("SAVE",3,1,frame.getContentPane());
+        newButton = new MyButton("NEW",0,2,frame.getContentPane());
+        openButton = new MyButton("OPEN",1,2,frame.getContentPane());
+        helpButton = new MyButton("HELP",2,2,frame.getContentPane());
+        saveButton = new MyButton("SAVE",3,2,frame.getContentPane());
         saveButton.getButton().setEnabled(false);
-        solveButton = new MyButton("SOLVE",4,1,frame.getContentPane());
+        solveButton = new MyButton("SOLVE",4,2,frame.getContentPane());
         solveButton.getButton().setEnabled(false);
-        viewButton = new MyButton("VIEW",5,1,frame.getContentPane());
+        viewButton = new MyButton("VIEW",5,2,frame.getContentPane());
         viewButton.getButton().setEnabled(false);
 
         frame.setVisible(true);

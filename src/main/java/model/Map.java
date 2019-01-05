@@ -37,13 +37,6 @@ public class Map {
     }
 
 
-    public void print(){
-        for(int i=0;i<rows;i++){
-            for (int j = 0; j < cols; j++)
-                System.out.print(coefficients[i][j] + " ");
-            System.out.println("");
-        }
-    }
 
     public String[] stringCols(){
         String[] s = new String[cols];

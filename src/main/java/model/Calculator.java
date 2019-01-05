@@ -146,18 +146,20 @@ public class Calculator {
 
     public boolean isConnected(GameVariables gameVariables,IloCplex cplex) throws IloException {
         int i; int j;
-        //creating an array with visited vertexes, if are not in the subgraph visited = true
+        //creating an array with visited vertices, if are not in the subgraph, visited = true
         boolean[][] Visited = new boolean[gameVariables.getNodeSolver().length][gameVariables.getNodeSolver()[0].length];
         for(i=0;i<Visited.length;i++)
             for(j=0;j<Visited[0].length;j++) {
                 if (cplex.getValue(gameVariables.getNodeSolver()[i][j]) == 0) Visited[i][j] = true;
-                else Visited[i][j] = false;
+                else {
+                    Visited[i][j] = false;
+                }
             }
 
         //looking for a vertex from the subgraph
         i=0; j=0;
         while(Visited[i][j]==true){
-            if(j==gameVariables.getNodeSolver()[0].length){
+            if(j==Visited[0].length-1){
                 j=0; i++;
             }
             else j++;
@@ -174,7 +176,7 @@ public class Calculator {
 
     public void divide(GameVariables gameVariables,IloCplex cplex) throws IloException {
         int i; int j;
-        //creating an array with visited vertexes, if are not in the subgraph visited = true
+        //creating an array with visited vertices, if are not in the subgraph visited = true
         boolean[][] Visited = new boolean[gameVariables.getNodeSolver().length][gameVariables.getNodeSolver()[0].length];
         for(i=0;i<Visited.length;i++)
             for(j=0;j<Visited[0].length;j++) {
@@ -238,7 +240,7 @@ public class Calculator {
     }
 
 
-    //myDFS goes through the connected subgraph and counts the number of vertexes
+    //myDFS goes through the connected subgraph and counts the number of vertices
     private int myDFS(GameVariables gameVariables,IloCplex cplex,boolean[][] Visited,int i,int j,int counter) throws IloException {
         Visited[i][j]=true;
         boolean hasUnvisited = false;

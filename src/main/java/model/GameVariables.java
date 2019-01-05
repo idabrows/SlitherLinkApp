@@ -137,20 +137,20 @@ public class GameVariables {
 
     }
 
-    public int[][] getSureVertical() {
-        return SureVertical;
+    public void printHorizontalLines(){
+        for (int i = 0; i < HorizontalLineInt.length; i++) {
+            System.out.println(Arrays.toString(HorizontalLineInt[i]));
+        }
+        System.out.println("");
+
     }
 
-    public void setSureVertical(int[][] sureVertical) {
-        SureVertical = sureVertical;
-    }
+    public void printNode(){
+        for (int i = 0; i < NodeInt.length; i++) {
+            System.out.println(Arrays.toString(NodeInt[i]));
+        }
+        System.out.println("");
 
-    public int[][] getSureHorizontal() {
-        return SureHorizontal;
-    }
-
-    public void setSureHorizontal(int[][] sureHorizontal) {
-        SureHorizontal = sureHorizontal;
     }
 
     @Override
@@ -178,37 +178,6 @@ public class GameVariables {
 
     }
 
-    public void printSureVertical(){
-        for (int i = 0; i < SureVertical.length; i++) {
-            System.out.println(Arrays.toString(SureVertical[i]));
-        }
-    }
-
-    public void printSureHorizontal(){
-        for (int i = 0; i < SureHorizontal.length; i++) {
-            System.out.println(Arrays.toString(SureHorizontal[i]));
-        }
-    }
-
-    public int sumSureVertical(){
-        int sum=0;
-        for (int i = 0; i < SureVertical.length; i++) {
-            for (int j = 0; j < SureVertical[0].length; j++) {
-                if(SureVertical[i][j]!=-1) sum++;
-            }
-        }
-        return sum;
-    }
-
-    public int sumSureHorizontal(){
-        int sum=0;
-        for (int i = 0; i < SureHorizontal.length; i++) {
-            for (int j = 0; j < SureHorizontal[0].length; j++) {
-                if(SureHorizontal[i][j]!=-1) sum++;
-            }
-        }
-        return sum;
-    }
 
     @Override
     public int hashCode() {
