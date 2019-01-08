@@ -6,10 +6,9 @@ import view.Components.MyTable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import java.util.Arrays;
 
 public class ViewWorker extends JFrame {
-    public JTable getTable(Map map){
+    JTable getTable(Map map) {
         String[] columns;
         String[][] data;
         TableModel model;
@@ -17,12 +16,11 @@ public class ViewWorker extends JFrame {
         data = map.stringCoefficients();
         model = new DefaultTableModel(data, columns);
         JTable table = new JTable(model);
-
         setLocationRelativeTo(null);
         return table;
     }
 
-    public Map getMap(MyTable table){
+    public Map getMap(MyTable table) {
         Map map = new Map();
         String[][] s = new String[table.getTable().getRowCount()][table.getTable().getColumnCount()];
         for (int i = 0; i < s.length; i++) {
@@ -33,6 +31,5 @@ public class ViewWorker extends JFrame {
         map.setCoefficients(s);
         return map;
     }
-
 
 }

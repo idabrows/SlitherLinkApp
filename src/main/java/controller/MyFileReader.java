@@ -1,27 +1,20 @@
 package controller;
 
 import model.Map;
-import view.Components.MyTable;
-
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 
 public class MyFileReader {
-
     private final JFileChooser FileChooser;
     private static MyFileReader f;
+
     private MyFileReader(){
         FileChooser=new JFileChooser();
     }
-    public static MyFileReader getInstance(){
+
+    static MyFileReader getInstance(){
         if(f==null){
             f=new MyFileReader();
         }
@@ -31,8 +24,7 @@ public class MyFileReader {
     public File getUsersFile(Component parent){
         int flag=FileChooser.showOpenDialog(parent);
         if(flag==JFileChooser.APPROVE_OPTION){
-            File file=FileChooser.getSelectedFile();
-            return file;
+            return FileChooser.getSelectedFile();
         }
         return null;
     }
@@ -47,10 +39,7 @@ public class MyFileReader {
         Map m = new Map();
         m.readMapFromFile(file);
         ViewWorker viewWorker = new ViewWorker();
-        JTable table = viewWorker.getTable(m);
-        return table;
+        return viewWorker.getTable(m);
     }
-
-
 
 }

@@ -6,14 +6,14 @@ import controller.ViewWorker;
 import ilog.concert.IloException;
 import model.Map;
 import view.Components.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 
-public class StartWindow extends JFrame {
+class StartWindow extends JFrame {
+    private MyStartPicture myStartPicture;
     private OkButton okButton;
     private MapWindow mapWindow;
     private MySpinners mySpinners;
@@ -22,59 +22,65 @@ public class StartWindow extends JFrame {
     private MyButton newButton;
     private MyButton openButton;
     private MyButton helpButton;
-    private MyButton saveButton;
+    private MyButton saveAsButton;
     private MyButton solveButton;
     private MyButton viewButton;
+    private MyButton saveButton;
     private File F;
     private Map map;
-    protected FileCommunicator FC = FileCommunicator.getInstance();
-    protected ViewWorker VW;
-    private JPanel panel1;
+    private final FileCommunicator FC = FileCommunicator.getInstance();
 
-    public StartWindow(){
+    private StartWindow(){
         createandshow();
-        VW = new ViewWorker();
         openButton.getButton().addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) { OpenActionPerformed(evt); }
+            public void actionPerformed(java.awt.event.ActionEvent evt) { OpenActionPerformed(); }
         });
         helpButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                HelpActionPerformed(evt);
+                HelpActionPerformed();
             }
         });
         newButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NewActionPerformed(evt);
+                NewActionPerformed();
             }
         });
         saveButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SaveActionPerformed(evt);
+                SaveActionPerformed();
+            }
+        });
+        saveAsButton.getButton().addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveAsActionPerformed();
             }
         });
         viewButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ViewActionPerformed(evt);
+                ViewActionPerformed();
             }
         });
         solveButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
-                    SolveActionPerformed(evt);
+                    SolveActionPerformed();
                 } catch (IloException e) {
                     e.printStackTrace();
                 }
             }
         });
-        frame.setMinimumSize(new Dimension(430,150));
-
     }
 
-    private void OpenActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_FileOpenActionPerformed
+    private void OpenActionPerformed(){
+        saveAsButton.getButton().setEnabled(true);
         saveButton.getButton().setEnabled(true);
+        viewButton.getButton().setEnabled(true);
+        solveButton.getButton().setEnabled(true);
         F = FC.getFR().getUsersFile(this);
         try {
             JTable jTable=FC.getFR().getUsersTable(F);
+            if(myStartPicture!=null)
+                frame.getContentPane().remove(myStartPicture.getLabel());
             if(table!=null)
                frame.getContentPane().remove(table.getTable());
             if(okButton!=null) {
@@ -87,18 +93,15 @@ public class StartWindow extends JFrame {
             map = FC.getFR().getUsersMap(F);
             frame.setSize(40+40*map.getCols(),40+40*map.getRows());
             table = new MyTable(jTable,0,0,frame.getContentPane());
-            SwingUtilities.updateComponentTreeUI(this);
-            viewButton.getButton().setEnabled(true);
-            solveButton.getButton().setEnabled(true);
+            frame.setTitle(F.getPath()+" - Slitherlink");
             frame.repaint();
             frame.setVisible(true);
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
-    private void SaveActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_FileOpenActionPerformed
+    private void SaveAsActionPerformed() {
         ViewWorker viewWorker = new ViewWorker();
         map = viewWorker.getMap(table);
         F = FC.getFW().getUsersDir(this);
@@ -108,14 +111,26 @@ public class StartWindow extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        frame.setTitle(F.getPath()+" - Slitherlink");
     }
 
-    private void HelpActionPerformed(java.awt.event.ActionEvent evt) {
+    private void SaveActionPerformed() {
+        ViewWorker viewWorker = new ViewWorker();
+        map = viewWorker.getMap(table);
+        if(F==null) SaveAsActionPerformed();
+        try {
+            map.saveUsersMap(F);
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void HelpActionPerformed(){
         new HelpWindow();
     }
 
-    private void SolveActionPerformed(java.awt.event.ActionEvent evt) throws IloException {
+    private void SolveActionPerformed() throws IloException{
         ViewWorker viewWorker = new ViewWorker();
         map = viewWorker.getMap(table);
         SolverController solverController = new SolverController(map);
@@ -129,14 +144,13 @@ public class StartWindow extends JFrame {
             mapWindow.create();
             mapWindow.showSolved(solverController);
         }
-
     }
 
-
-    private void ViewActionPerformed(java.awt.event.ActionEvent evt) {
+    private void ViewActionPerformed(){
         ViewWorker viewWorker = new ViewWorker();
         if(mapWindow==null || !mapWindow.getFocusableWindowState()){
-                mapWindow = new MapWindow(viewWorker.getMap(table));
+            mapWindow = new MapWindow(viewWorker.getMap(table));
+            mapWindow.showUnsolved();
         }
         else{
             mapWindow.setMap(viewWorker.getMap(table));
@@ -147,7 +161,8 @@ public class StartWindow extends JFrame {
 
     }
 
-    private void OkActionPerformed(java.awt.event.ActionEvent evt) {
+    private void OkActionPerformed(){
+        saveAsButton.getButton().setEnabled(true);
         saveButton.getButton().setEnabled(true);
         viewButton.getButton().setEnabled(true);
         solveButton.getButton().setEnabled(true);
@@ -158,17 +173,18 @@ public class StartWindow extends JFrame {
         frame.getContentPane().remove(okButton.getButton());
         frame.setSize(40+40*(Integer)mySpinners.getSpinner2().getValue(),40+40*(Integer)mySpinners.getSpinner1().getValue());
         table = new MyTable((Integer) mySpinners.getSpinner1().getValue(),(Integer) mySpinners.getSpinner2().getValue(),0,0,frame.getContentPane());
+        frame.setTitle("Untitled - Slitherlink");
         frame.repaint();
         frame.setVisible(true);
-
     }
 
-
-    private void NewActionPerformed(java.awt.event.ActionEvent evt) {
-        frame.setSize(0,0);
+    private void NewActionPerformed(){
+        frame.setSize(new Dimension(600,220));
+        if(myStartPicture!=null)
+            frame.getContentPane().remove(myStartPicture.getLabel());
         if(table!=null)
             frame.getContentPane().remove(table.getTable());
-        if(okButton!=null) {
+        if(okButton!=null){
             frame.getContentPane().remove(mySpinners.getSpinner1());
             frame.getContentPane().remove(mySpinners.getSpinner2());
             frame.getContentPane().remove(mySpinners.getLabel1());
@@ -181,32 +197,34 @@ public class StartWindow extends JFrame {
         frame.setVisible(true);
         okButton.getButton().addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OkActionPerformed(evt);
+                OkActionPerformed();
             }
         });
     }
 
 
 
-    public void createandshow(){
+    private void createandshow(){
         frame = new JFrame("Slitherlink");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new GridBagLayout());
-        //Set up the content pane.
-        frame.setSize(430,150);
+        frame.setMinimumSize(new Dimension(600,220));
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
         newButton = new MyButton("NEW",0,2,frame.getContentPane());
         openButton = new MyButton("OPEN",1,2,frame.getContentPane());
         helpButton = new MyButton("HELP",2,2,frame.getContentPane());
         saveButton = new MyButton("SAVE",3,2,frame.getContentPane());
         saveButton.getButton().setEnabled(false);
-        solveButton = new MyButton("SOLVE",4,2,frame.getContentPane());
+        saveAsButton = new MyButton("SAVE AS",4,2,frame.getContentPane());
+        saveAsButton.getButton().setEnabled(false);
+        solveButton = new MyButton("SOLVE",5,2,frame.getContentPane());
         solveButton.getButton().setEnabled(false);
-        viewButton = new MyButton("VIEW",5,2,frame.getContentPane());
+        viewButton = new MyButton("VIEW",6,2,frame.getContentPane());
         viewButton.getButton().setEnabled(false);
-
+        myStartPicture = new MyStartPicture(frame.getContentPane(),"MapPictures//Start.png");
         frame.setVisible(true);
     }
-
 
     public static void main(String[] args) {
         new StartWindow();

@@ -10,9 +10,9 @@ import java.util.List;
 
 public class SolverController {
     private boolean toSolve = true;
-    IloCplex cplex = new IloCplex();
-    Calculator calculator;
-    private Map M;
+    private IloCplex cplex = new IloCplex();
+    private final Calculator calculator;
+    private final Map M;
     private GameVariables gameVariables;
 
     public SolverController(Map M) throws IloException {
@@ -21,9 +21,7 @@ public class SolverController {
         solveMe();
     }
 
-
-
-    public void solveMe() throws IloException {
+    private void solveMe() throws IloException {
         gameVariables = new GameVariables(M);
         List<IloRange> constraints = new ArrayList<>();
         notConnectedYet(gameVariables, cplex, constraints);
@@ -40,9 +38,9 @@ public class SolverController {
             notConnectedYet(gameVariables, cplex, constraints);
 
             for (int i = 0; i < calculator.getPartition().size(); i++) {
-                IloIntExpr iloIntExpr = cplex.linearIntExpr();
+                IloLinearIntExpr iloIntExpr = cplex.linearIntExpr();
                 for (IloIntVar iloIntVar : calculator.getPartition().get(i))
-                    ((IloLinearIntExpr) iloIntExpr).addTerm(iloIntVar, 1);
+                    iloIntExpr.addTerm(iloIntVar, 1);
                 constraints.add(cplex.addLe(cplex.sum(iloIntExpr, 1), calculator.getPartition().get(i).size()));
             }
             if(!cplex.solve()){
@@ -50,57 +48,23 @@ public class SolverController {
              return;
             }
             gameVariables.setIntGameVariables(cplex);
-
         }
-
     }
 
- public void notConnectedYet(GameVariables gameVariables, IloCplex cplex, List<IloRange> constraints) throws IloException {
-        calculator.makeBool(gameVariables,cplex);
+    private void notConnectedYet(GameVariables gameVariables, IloCplex cplex, List<IloRange> constraints) throws IloException {
+        Calculator.makeBool(gameVariables,cplex);
         calculator.addPrimaryConstraints(gameVariables,cplex,constraints);
         calculator.addGameConstraints(gameVariables,cplex,constraints);
         calculator.addCycleConstraints(gameVariables,cplex,constraints);
         calculator.notEmpty(gameVariables,cplex,constraints);
   }
 
-
-    public Calculator getCalculator() {
-        return calculator;
-    }
-
-    public void setCalculator(Calculator calculator) {
-        this.calculator = calculator;
-    }
-
-    public Map getM() {
-        return M;
-    }
-
-    public void setM(Map m) {
-        M = m;
-    }
-
     public GameVariables getGameVariables() {
         return gameVariables;
-    }
-
-    public void setGameVariables(GameVariables gameVariables) {
-        this.gameVariables = gameVariables;
     }
 
     public boolean isToSolve() {
         return toSolve;
     }
 
-    public void setToSolve(boolean toSolve) {
-        this.toSolve = toSolve;
-    }
-
-    public IloCplex getCplex() {
-        return cplex;
-    }
-
-    public void setCplex(IloCplex cplex) {
-        this.cplex = cplex;
-    }
 }

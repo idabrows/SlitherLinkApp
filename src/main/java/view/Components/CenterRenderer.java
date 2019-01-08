@@ -4,17 +4,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class CenterRenderer extends DefaultTableCellRenderer {
+class CenterRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 4303488312800615992L;
 
-    public CenterRenderer() {
+    CenterRenderer() {
         setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value,
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
-        super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
-                row, column);
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         return this;
     }
+
 }
