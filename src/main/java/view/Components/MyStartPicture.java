@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MyStartPicture {
-    private JLabel label;
+    private final JLabel label;
 
     public MyStartPicture(Container pane, String fileName){
         GridBagConstraints c = new GridBagConstraints();
