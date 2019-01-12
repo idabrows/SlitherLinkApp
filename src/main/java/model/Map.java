@@ -58,7 +58,7 @@ public class Map {
         return s;
     }
 
-    public static int stringCoefficientToInt(String s){
+    static int stringCoefficientToInt(String s){
           if(s==null || (!s.equals("0") && !s.equals("1") && !s.equals("2") && !s.equals("3") && !s.equals("4"))) s="-1";
           return Integer.parseInt(s);
     }
@@ -75,7 +75,7 @@ public class Map {
         return coefficients;
     }
 
-    public void setCoefficient(int coefficient, int i, int j) {
+    void setCoefficient(int coefficient, int i, int j) {
         this.coefficients[i][j] = coefficient;
     }
 

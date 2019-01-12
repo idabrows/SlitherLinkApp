@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: cplex.jar opentest4j-1.1.1.jar junit5-api-5.0.0-ALPHA.jar 
+ junit-engine-api-5.0.0-ALPHA.jar javailp-1.2a.jar junit5-engine-5.0.0
+ -ALPHA.jar junit-commons-5.0.0-ALPHA.jar
+Main-Class: view.StartWindow
+

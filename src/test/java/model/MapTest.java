@@ -12,7 +12,7 @@ class MapTest {
     @Test
     void readMapFromFile() throws IOException {
         Map map = new Map();
-        map.readMapFromFile(new File("ExampleMaps//6x8VeryEasy1.txt"));
+        map.readMapFromFile(new File("resources//ExampleMaps//6x8VeryEasy1.txt"));
         int[][]A={
                 {-1,3,2,1,2,-1},
                 {-1,0,1,-1,-1,1},
@@ -56,9 +56,9 @@ class MapTest {
                 {-1,3,3,2,2,-1}
         };
         map1.setCoefficients(A);
-        map1.saveUsersMap(new File("ExampleMaps//6x8VeryEasy1Test.txt"));
+        map1.saveUsersMap(new File("resources//ExampleMaps//6x8VeryEasy1Test.txt"));
         Map map2 = new Map();
-        map2.readMapFromFile(new File("ExampleMaps//6x8VeryEasy1Test.txt"));
+        map2.readMapFromFile(new File("resources//ExampleMaps//6x8VeryEasy1Test.txt"));
         assertEquals(map2.getRows(),8);
         assertEquals(map2.getCols(),6);
         for (int i = 0; i < map2.getRows(); i++) {

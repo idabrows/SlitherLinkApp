@@ -30,22 +30,22 @@ class MapWindow extends JFrame{
 
     void showUnsolved(){
 //j==0
-        new MyPicture(0,0,frame.getContentPane(),"MapPictures//CornerUpLeft.png");
+        new MyPicture(0,0,frame.getContentPane(),"resources//MapPictures//CornerUpLeft.png");
         for (int i = 1; i < map.getCols()+1; i++)
-            new MyPicture(i,0,frame.getContentPane(),"MapPictures//BorderUp0.png");
-        new MyPicture(map.getCols()+1,0,frame.getContentPane(),"MapPictures//CornerUpRight.png");
+            new MyPicture(i,0,frame.getContentPane(),"resources//MapPictures//BorderUp0.png");
+        new MyPicture(map.getCols()+1,0,frame.getContentPane(),"resources//MapPictures//CornerUpRight.png");
 //j==1...map.getRows
         for (int j = 1; j < map.getRows()+1; j++) {
-            new MyPicture(0,j,frame.getContentPane(),"MapPictures//BorderLeft0.png");
+            new MyPicture(0,j,frame.getContentPane(),"resources//MapPictures//BorderLeft0.png");
             for (int i = 1; i < map.getCols()+1; i++)
-                new MyPicture(i,j,frame.getContentPane(),"MapPictures//"+map.getCoefficients()[j-1][i-1]+".png");
-            new MyPicture(map.getCols()+1,j,frame.getContentPane(),"MapPictures//BorderRight0.png");
+                new MyPicture(i,j,frame.getContentPane(),"resources//MapPictures//"+map.getCoefficients()[j-1][i-1]+".png");
+            new MyPicture(map.getCols()+1,j,frame.getContentPane(),"resources//MapPictures//BorderRight0.png");
         }
 //j==map.getRows+1
-        new MyPicture(0,map.getRows()+1,frame.getContentPane(),"MapPictures//CornerDownLeft.png");
+        new MyPicture(0,map.getRows()+1,frame.getContentPane(),"resources//MapPictures//CornerDownLeft.png");
         for (int i = 1; i < map.getCols()+1; i++)
-            new MyPicture(i,map.getRows()+1,frame.getContentPane(),"MapPictures//BorderDown0.png");
-        new MyPicture(map.getCols()+1,map.getRows()+1,frame.getContentPane(),"MapPictures//CornerDownRight.png");
+            new MyPicture(i,map.getRows()+1,frame.getContentPane(),"resources//MapPictures//BorderDown0.png");
+        new MyPicture(map.getCols()+1,map.getRows()+1,frame.getContentPane(),"resources//MapPictures//CornerDownRight.png");
 
         frame.setVisible(true);
     }
@@ -56,24 +56,24 @@ class MapWindow extends JFrame{
             return;
         }
 //j==0, i==0
-        new MyPicture(0,0,frame.getContentPane(),"MapPictures//CornerUpLeft.png");
+        new MyPicture(0,0,frame.getContentPane(),"resources//MapPictures//CornerUpLeft.png");
 //j==0,i==1...map.getCols
         for (int i = 1; i < map.getCols()+1; i++) {
             if (solverController.getGameVariables().getHorizontalLineInt()[0][i - 1] == 1)
-                new MyPicture(i, 0, frame.getContentPane(), "MapPictures//BorderUp1.png");
+                new MyPicture(i, 0, frame.getContentPane(), "resources//MapPictures//BorderUp1.png");
             else
-                new MyPicture(i, 0, frame.getContentPane(), "MapPictures//BorderUp0.png");
+                new MyPicture(i, 0, frame.getContentPane(), "resources//MapPictures//BorderUp0.png");
         }
-        new MyPicture(map.getCols()+1,0,frame.getContentPane(),"MapPictures//CornerUpRight.png");
+        new MyPicture(map.getCols()+1,0,frame.getContentPane(),"resources//MapPictures//CornerUpRight.png");
 //j==1...map.getRows, i==0
         for (int j = 1; j < map.getRows()+1; j++) {
             if(solverController.getGameVariables().getVerticalLineInt()[j-1][0]==1)
-                new MyPicture(0,j,frame.getContentPane(),"MapPictures//BorderLeft1.png");
+                new MyPicture(0,j,frame.getContentPane(),"resources//MapPictures//BorderLeft1.png");
             else
-                new MyPicture(0,j,frame.getContentPane(),"MapPictures//BorderLeft0.png");
+                new MyPicture(0,j,frame.getContentPane(),"resources//MapPictures//BorderLeft0.png");
 //j==1...map.getRows, i==1...map.getCols
             for (int i = 1; i < map.getCols()+1; i++) {
-                String str = "MapPictures//";
+                String str = "resources//MapPictures//";
                 if(solverController.getGameVariables().getHorizontalLineInt()[j-1][i-1]==1) str += "Up";
                 if(solverController.getGameVariables().getHorizontalLineInt()[j][i-1]==1) str += "Down";
                 if(solverController.getGameVariables().getVerticalLineInt()[j-1][i-1]==1) str += "Left";
@@ -84,20 +84,20 @@ class MapWindow extends JFrame{
             }
 //j==1...map.getRows, i==map.getCols+1
             if(solverController.getGameVariables().getVerticalLineInt()[j-1][map.getCols()]==1)
-                new MyPicture(map.getCols()+1,j,frame.getContentPane(),"MapPictures//BorderRight1.png");
+                new MyPicture(map.getCols()+1,j,frame.getContentPane(),"resources//MapPictures//BorderRight1.png");
             else
-                new MyPicture(map.getCols()+1,j,frame.getContentPane(),"MapPictures//BorderRight0.png");
+                new MyPicture(map.getCols()+1,j,frame.getContentPane(),"resources//MapPictures//BorderRight0.png");
         }
 //j==map.getRows+1, i==0
-        new MyPicture(0,map.getRows()+1,frame.getContentPane(),"MapPictures//CornerDownLeft.png");
+        new MyPicture(0,map.getRows()+1,frame.getContentPane(),"resources//MapPictures//CornerDownLeft.png");
 //j==map.getRows+1, i==1...map.getCols
         for (int i = 1; i < map.getCols()+1; i++)
             if (solverController.getGameVariables().getHorizontalLineInt()[map.getRows()][i - 1] == 1)
-                new MyPicture(i, map.getRows()+1, frame.getContentPane(), "MapPictures//BorderDown1.png");
+                new MyPicture(i, map.getRows()+1, frame.getContentPane(), "resources//MapPictures//BorderDown1.png");
             else
-                new MyPicture(i, map.getRows()+1, frame.getContentPane(), "MapPictures//BorderDown0.png");
+                new MyPicture(i, map.getRows()+1, frame.getContentPane(), "resources//MapPictures//BorderDown0.png");
 //j==map.getRows+1, i==1...map.getCols
-        new MyPicture(map.getCols()+1,map.getRows()+1,frame.getContentPane(),"MapPictures//CornerDownRight.png");
+        new MyPicture(map.getCols()+1,map.getRows()+1,frame.getContentPane(),"resources//MapPictures//CornerDownRight.png");
         frame.setVisible(true);
     }
 

@@ -72,11 +72,8 @@ class StartWindow extends JFrame {
     }
 
     private void OpenActionPerformed(){
-        saveAsButton.getButton().setEnabled(true);
-        saveButton.getButton().setEnabled(true);
-        viewButton.getButton().setEnabled(true);
-        solveButton.getButton().setEnabled(true);
         F = FC.getFR().getUsersFile(this);
+        if(F==null) return;
         try {
             JTable jTable=FC.getFR().getUsersTable(F);
             if(myStartPicture!=null)
@@ -91,6 +88,10 @@ class StartWindow extends JFrame {
                 frame.getContentPane().remove(okButton.getButton());
             }
             map = FC.getFR().getUsersMap(F);
+            saveAsButton.getButton().setEnabled(true);
+            saveButton.getButton().setEnabled(true);
+            viewButton.getButton().setEnabled(true);
+            solveButton.getButton().setEnabled(true);
             frame.setSize(40+40*map.getCols(),40+40*map.getRows());
             table = new MyTable(jTable,0,0,frame.getContentPane());
             frame.setTitle(F.getPath()+" - Slitherlink");
@@ -105,6 +106,7 @@ class StartWindow extends JFrame {
         ViewWorker viewWorker = new ViewWorker();
         map = viewWorker.getMap(table);
         F = FC.getFW().getUsersDir(this);
+        if(F==null) return;
         try {
             map.saveUsersMap(F);
             SwingUtilities.updateComponentTreeUI(this);
@@ -117,7 +119,10 @@ class StartWindow extends JFrame {
     private void SaveActionPerformed() {
         ViewWorker viewWorker = new ViewWorker();
         map = viewWorker.getMap(table);
-        if(F==null) SaveAsActionPerformed();
+        if(F==null){
+            SaveAsActionPerformed();
+            return;
+        }
         try {
             map.saveUsersMap(F);
             SwingUtilities.updateComponentTreeUI(this);
@@ -222,7 +227,7 @@ class StartWindow extends JFrame {
         solveButton.getButton().setEnabled(false);
         viewButton = new MyButton("VIEW",6,2,frame.getContentPane());
         viewButton.getButton().setEnabled(false);
-        myStartPicture = new MyStartPicture(frame.getContentPane(),"MapPictures//Start.png");
+        myStartPicture = new MyStartPicture(frame.getContentPane(),"resources//MapPictures//Start.png");
         frame.setVisible(true);
     }
 

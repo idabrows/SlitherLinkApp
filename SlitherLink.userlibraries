@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="cplex">
+    <archive path="/opt/ibm/ILOG/CPLEX_Studio_Community128/cplex/lib/cplex.jar" />
+  </library>
+  <library name="javailp-1.2a" />
+</eclipse-userlibraries>
+
