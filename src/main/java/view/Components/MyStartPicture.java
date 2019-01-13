@@ -6,9 +6,9 @@ import java.awt.*;
 public class MyStartPicture {
     private final JLabel label;
 
-    public MyStartPicture(Container pane, String fileName){
+    public MyStartPicture(Container pane){
         GridBagConstraints c = new GridBagConstraints();
-        label = new JLabel(new ImageIcon(fileName));
+        label = new JLabel(new ImageIcon(MyStartPicture.class.getResource("/Start.png")));
         pane.add(label);
         c.fill = GridBagConstraints.VERTICAL;
         c.weightx=0;

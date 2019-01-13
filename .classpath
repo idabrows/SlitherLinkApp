@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="src/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/cplex"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javailp-1.2a"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/lp_solve_5.5.2"/>

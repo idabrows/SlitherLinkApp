@@ -7,7 +7,7 @@ public class MyPicture{
 
     public MyPicture(int x, int y, Container pane,String fileName){
         GridBagConstraints c = new GridBagConstraints();
-        JLabel label = new JLabel(new ImageIcon(fileName));
+        JLabel label = new JLabel(new ImageIcon(MyPicture.class.getResource(fileName)));
         pane.add(label);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx=1;

@@ -227,7 +227,7 @@ class StartWindow extends JFrame {
         solveButton.getButton().setEnabled(false);
         viewButton = new MyButton("VIEW",6,2,frame.getContentPane());
         viewButton.getButton().setEnabled(false);
-        myStartPicture = new MyStartPicture(frame.getContentPane(),"resources//MapPictures//Start.png");
+        myStartPicture = new MyStartPicture(frame.getContentPane());
         frame.setVisible(true);
     }
 
